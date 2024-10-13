@@ -34,7 +34,8 @@ public class Address {
     @JsonBackReference
     private Person person;
 
-
+    @Column(name = "address_type")
+    @Convert(converter = Converter.class)
     private boolean isPermanent;
 
 }
