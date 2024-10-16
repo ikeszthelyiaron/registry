@@ -17,11 +17,6 @@ public class AddressMapper {
         Address address = new Address();
         address.setCity(dto.city());
         address.setZipCode(dto.zipCode());
-//        Person person = personRepository.findById(dto.personId())
-//                .orElseThrow(() -> new RuntimeException("There is no person with id " + dto.personId()));
-//        if(person != null) {
-//            address.setPerson(person);
-//        }
         if(dto.street() != null) {
             address.setStreet(dto.street());
         }
@@ -39,7 +34,6 @@ public class AddressMapper {
                 .zipCode(entity.getZipCode())
                 .street(entity.getStreet())
                 .houseNumber(entity.getHouseNumber())
-//                .personId(entity.getPerson().getId())
                 .build();
     }
 

@@ -7,7 +7,6 @@ import hu.otp.assignment.dto.mapper.AddressMapper;
 import hu.otp.assignment.repository.AddressRepository;
 import hu.otp.assignment.repository.PersonRepository;
 import hu.otp.assignment.service.AddressService;
-import hu.otp.assignment.service.PersonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

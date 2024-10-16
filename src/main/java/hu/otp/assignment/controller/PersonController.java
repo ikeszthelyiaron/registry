@@ -1,19 +1,32 @@
 package hu.otp.assignment.controller;
 
+import hu.otp.assignment.dto.PersonDto;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+@RequestMapping("/person")
 public interface PersonController {
 
     /*
-    1. Create: DTO
-    2. Read: ID
-    3. Update: ID --> DTO beküld: VAGY: mind mód-hoz külön API?
-    4. Delete: Id --> a ContactD törl, a cím ne
-    ?: Person & Address: leh 1xre lét hoz? --> NE
+    !: cím: 1 v töb em is tart 1hez!
 
     UPDATE:
-    1. perm Addr mód
-    2. temp Add mód
+    1. név mód
+    2. perm Addr mód
     3. temp Add hoz ad
-    4. temp Add trl
-    5. név mód
+    4. temp Add mód
+    5. temp Add trl
      */
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    void createPerson(@RequestBody @Valid PersonDto personDto);
+
+    @DeleteMapping("/{id}")
+    void deletePerson(@PathVariable long id);
+
+    @GetMapping
+    PersonDto getPersonById(@PathVariable long id);
+
 }
