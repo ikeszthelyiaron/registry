@@ -1,11 +1,9 @@
 package hu.otp.assignment.util;
 
 import jakarta.persistence.AttributeConverter;
-import org.springframework.stereotype.Component;
 import jakarta.persistence.Converter;
 
 
-//@Component
 @Converter(autoApply = true)
 public class BooleanStringConverter implements AttributeConverter<Boolean, String> {
     @Override
@@ -15,6 +13,6 @@ public class BooleanStringConverter implements AttributeConverter<Boolean, Strin
 
     @Override
     public String convertToDatabaseColumn(Boolean attribute) {
-        return attribute.equals("true") ? "permanent" : "temporary";
+        return attribute.equals(true) ? "permanent" : "temporary";
     }
 }
