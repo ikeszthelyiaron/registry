@@ -23,7 +23,7 @@ public class Person {
     @Column(name = "name")
     private String name;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "temporary_address")
     @JsonManagedReference
     private Address temporary;

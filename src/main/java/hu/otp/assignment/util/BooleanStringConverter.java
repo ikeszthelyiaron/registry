@@ -1,12 +1,16 @@
 package hu.otp.assignment.util;
 
 import jakarta.persistence.AttributeConverter;
+import org.springframework.stereotype.Component;
+import jakarta.persistence.Converter;
 
-@jakarta.persistence.Converter(autoApply = true)
-public class Converter implements AttributeConverter<Boolean, String> {
+
+//@Component
+@Converter(autoApply = true)
+public class BooleanStringConverter implements AttributeConverter<Boolean, String> {
     @Override
     public Boolean convertToEntityAttribute(String dbData) {
-        return dbData.equals("permanent") ? true : false;
+        return dbData.equals("permanent");
     }
 
     @Override

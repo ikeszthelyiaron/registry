@@ -1,6 +1,7 @@
 package hu.otp.assignment.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import hu.otp.assignment.util.BooleanStringConverter;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,7 +36,7 @@ public class Address {
     private Person person;
 
     @Column(name = "address_type")
-    @Convert(converter = Converter.class)
+    @Convert(converter = BooleanStringConverter.class)
     private boolean isPermanent;
 
 }

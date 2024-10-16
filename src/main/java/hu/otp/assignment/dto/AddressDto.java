@@ -11,7 +11,7 @@ public record AddressDto(
         @NotBlank(message = "") String city,
         String street,          //a település szintű lakcímekre tekintettel tudatosan lehet null
         String houseNumber,     //a település szintű lakcímekre tekintettel tudatosan lehet null
-        @Positive(message = "Person ID has to be a positive number") Long personId,
+//        @Positive(message = "Person ID has to be a positive number") Long personId,
         @NotNull(message = "The type of address has to be indicated") Boolean isPermanent
 ) {
 }
