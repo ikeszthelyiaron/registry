@@ -1,6 +1,7 @@
 package hu.otp.assignment.controller;
 
-import hu.otp.assignment.dto.PersonDto;
+import hu.otp.assignment.dto.PersonResponseDto;
+import hu.otp.assignment.dto.RegisterPersonDto;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -9,8 +10,6 @@ import org.springframework.web.bind.annotation.*;
 public interface PersonController {
 
     /*
-    !: cím: 1 v töb em is tart 1hez!
-
     UPDATE:
     1. név mód
     2. perm Addr mód
@@ -21,12 +20,12 @@ public interface PersonController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    void createPerson(@RequestBody @Valid PersonDto personDto);
+    void createPerson(@RequestBody @Valid RegisterPersonDto registerPersonDto);
 
     @DeleteMapping("/{id}")
     void deletePerson(@PathVariable long id);
 
-    @GetMapping
-    PersonDto getPersonById(@PathVariable long id);
+    @GetMapping("/{id}")
+    PersonResponseDto getPersonById(@PathVariable long id);
 
 }

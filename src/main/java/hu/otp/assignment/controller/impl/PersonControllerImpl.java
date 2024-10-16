@@ -1,7 +1,8 @@
 package hu.otp.assignment.controller.impl;
 
 import hu.otp.assignment.controller.PersonController;
-import hu.otp.assignment.dto.PersonDto;
+import hu.otp.assignment.dto.PersonResponseDto;
+import hu.otp.assignment.dto.RegisterPersonDto;
 import hu.otp.assignment.service.PersonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,7 +14,7 @@ public class PersonControllerImpl implements PersonController {
     private final PersonService personService;
 
     @Override
-    public PersonDto getPersonById(long id) {
+    public PersonResponseDto getPersonById(long id) {
         return personService.getPersonById(id);
     }
 
@@ -23,7 +24,7 @@ public class PersonControllerImpl implements PersonController {
     }
 
     @Override
-    public void createPerson(PersonDto personDto) {
-        personService.createPerson(personDto);
+    public void createPerson(RegisterPersonDto registerPersonDto) {
+        personService.createPerson(registerPersonDto);
     }
 }

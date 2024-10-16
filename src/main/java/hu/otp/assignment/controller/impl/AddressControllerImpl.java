@@ -21,4 +21,9 @@ public class AddressControllerImpl implements AddressController {
     public void createAddress(AddressDto addressDto) {
         addressService.createAddress(addressDto);
     }
+
+    @Override
+    public AddressDto getAddressById(long id) {
+        return addressService.getAddressById(id);
+    }
 }

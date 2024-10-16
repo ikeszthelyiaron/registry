@@ -41,6 +41,11 @@ public class AddressServiceImpl implements AddressService {
                 addressRepository.delete(address);
             }
         }
+    }
 
+    @Override
+    public AddressDto getAddressById(long id) {
+        return addressMapper.entityToDto(addressRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("There is no Address with id: " + id)));
     }
 }

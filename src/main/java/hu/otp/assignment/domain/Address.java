@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.Objects;
+
 @Data
 @NoArgsConstructor
 @Table
@@ -39,4 +41,20 @@ public class Address {
     @Convert(converter = BooleanStringConverter.class)
     private boolean isPermanent;
 
+    public void removePerson(Person person) {
+        this.person = null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Address address = (Address) o;
+        return Objects.equals(zipCode, address.zipCode) && Objects.equals(city, address.city) && Objects.equals(street, address.street) && Objects.equals(houseNumber, address.houseNumber);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(zipCode, city, street, houseNumber);
+    }
 }

@@ -3,9 +3,12 @@ package hu.otp.assignment.dto.mapper;
 import hu.otp.assignment.domain.ContactDetail;
 import hu.otp.assignment.domain.Person;
 import hu.otp.assignment.dto.ContactDetailDto;
+import hu.otp.assignment.dto.ContactDetailResponseDto;
 import hu.otp.assignment.repository.PersonRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -30,6 +33,9 @@ public class ContactDetailMapper {
                 entity.getIdentifier(), entity.getPerson().getId());
     }
 
+    public ContactDetailResponseDto entityToResponseDto(ContactDetail entity) {
+        return new ContactDetailResponseDto(entity.getPlatform(), entity.getIdentifier());
+    }
 
 
 }

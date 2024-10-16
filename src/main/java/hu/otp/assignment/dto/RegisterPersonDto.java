@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
 @Builder
-public record PersonDto(
+public record RegisterPersonDto(
 
         @NotBlank
         @Size(min = 3, message = "Name must contain at least three characters") String name,

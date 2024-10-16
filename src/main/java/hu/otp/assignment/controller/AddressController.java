@@ -19,4 +19,7 @@ public interface AddressController {
     @DeleteMapping("/{id}")
     void deleteAddressById(@PathVariable("id") long id);
 
+    @GetMapping("/{id}")
+    AddressDto getAddressById(@PathVariable("id") long id);
+
 }
