@@ -4,6 +4,8 @@ import hu.otp.assignment.domain.Address;
 import hu.otp.assignment.domain.Person;
 import hu.otp.assignment.dto.AddressDto;
 import hu.otp.assignment.dto.mapper.AddressMapper;
+import hu.otp.assignment.exception.NoAddressWithSuchIdException;
+import hu.otp.assignment.exception.PermAddressInUseException;
 import hu.otp.assignment.repository.AddressRepository;
 import hu.otp.assignment.repository.PersonRepository;
 import hu.otp.assignment.service.AddressService;
@@ -27,7 +29,7 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public void deleteAddressById(long id) {
         Address address = addressRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("There is no address with id " + id));
+                .orElseThrow(() -> new NoAddressWithSuchIdException(id));
         if(address != null) {
             Person person = address.getPerson();
             if(person != null) {
@@ -35,7 +37,7 @@ public class AddressServiceImpl implements AddressService {
                     person.setTemporary(null);
                     personRepository.save(person);
                 } else {
-                    throw new RuntimeException("You cannot delete a permanent Address that is associated with a Person.");
+                    throw new PermAddressInUseException(address.getId());
                 }
             } else {
                 addressRepository.delete(address);
@@ -46,6 +48,6 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public AddressDto getAddressById(long id) {
         return addressMapper.entityToDto(addressRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("There is no Address with id: " + id)));
+                .orElseThrow(() -> new NoAddressWithSuchIdException(id)));
     }
 }

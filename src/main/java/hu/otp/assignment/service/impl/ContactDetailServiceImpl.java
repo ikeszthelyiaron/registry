@@ -6,6 +6,10 @@ import hu.otp.assignment.domain.Platform;
 import hu.otp.assignment.dto.ContactDetailDto;
 import hu.otp.assignment.dto.PlatformDto;
 import hu.otp.assignment.dto.mapper.ContactDetailMapper;
+import hu.otp.assignment.exception.ContactDetailAlreadyExistsException;
+import hu.otp.assignment.exception.NoContactDetailWithSuchIdException;
+import hu.otp.assignment.exception.NoPersonWithSuchIdException;
+import hu.otp.assignment.exception.NoSuchContactDetailException;
 import hu.otp.assignment.repository.ContactDetailRepository;
 import hu.otp.assignment.repository.PersonRepository;
 import hu.otp.assignment.service.ContactDetailService;
@@ -26,13 +30,12 @@ public class ContactDetailServiceImpl implements ContactDetailService {
     @Override
     public void deleteContactDetail(long personId, PlatformDto platformDto) {
         Person person = personRepository.findById(personId)
-                .orElseThrow(() -> new RuntimeException("There is no Person with id " + personId));
+                .orElseThrow(() -> new NoPersonWithSuchIdException(personId));
         Platform platform = platformDto.platform();
         Optional<ContactDetail> contactDetail = contactDetailRepository
                 .findByPersonIdAndPlatform(personId, platform);
         if(contactDetail.isEmpty()) {
-            throw new RuntimeException("There is no Contact Detail with personId "
-                    + personId + " and Platform: " + platform );
+            throw new NoSuchContactDetailException(personId, platform);
         } else {
             person.removeContactDetail(platform);       //CASCADE miatt n fölösl?
             contactDetailRepository.delete(contactDetail.get());
@@ -42,15 +45,14 @@ public class ContactDetailServiceImpl implements ContactDetailService {
     @Override
     public void editContactDetail(ContactDetailDto contactDetailDto, long id) {
         ContactDetail contactDetail = contactDetailRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("There is no ContactDetail with id " + id));
+                .orElseThrow(() -> new NoContactDetailWithSuchIdException(id));
         Person person = personRepository.findById(contactDetailDto.personId())
-                .orElseThrow(() -> new RuntimeException("There is no Person with id " + contactDetailDto.personId()));
+                .orElseThrow(() -> new NoPersonWithSuchIdException(contactDetailDto.personId()));
         contactDetail.setPlatform(contactDetailDto.platform());
         contactDetail.setIdentifier(contactDetailDto.identifier());
         contactDetail.setPerson(person);
         if(contactDetailExists(contactDetail)) {
-            throw new RuntimeException("There is already a Contact Detail with this Platform and identifier: "
-                    + contactDetail.getPlatform() + " " + contactDetail.getIdentifier());
+            throw new ContactDetailAlreadyExistsException(contactDetail.getPlatform(), contactDetail.getIdentifier());
         }
         person.removeContactDetailById(id);
         person.addContactDetail(contactDetail);
@@ -66,11 +68,10 @@ public class ContactDetailServiceImpl implements ContactDetailService {
     public void addContactDetailToPerson(ContactDetailDto contactDetailDto) {
         ContactDetail contactDetail = contactDetailMapper.dtoToEntity(contactDetailDto);
         if(contactDetailExists(contactDetail)) {
-            throw new RuntimeException("There is already a Contact Detail with this Platform and identifier: "
-                    + contactDetail.getPlatform() + " " + contactDetail.getIdentifier());
+            throw new ContactDetailAlreadyExistsException(contactDetail.getPlatform(), contactDetail.getIdentifier());
         }
         Person person = personRepository.findById(contactDetailDto.personId())
-                .orElseThrow(() -> new RuntimeException("There is no Person with id " + contactDetailDto.personId()));
+                .orElseThrow(() -> new NoPersonWithSuchIdException(contactDetailDto.personId()));
         person.addContactDetail(contactDetail);
         contactDetailRepository.save(contactDetail);
     }
@@ -78,7 +79,7 @@ public class ContactDetailServiceImpl implements ContactDetailService {
     @Override
     public List<ContactDetailDto> getContactDetailsByPersonId(long personId) {
         Person person = personRepository.findById(personId)
-                .orElseThrow(() -> new RuntimeException("There is no Person with id " + personId));
+                .orElseThrow(() -> new NoPersonWithSuchIdException(personId));
         return contactDetailRepository.findAllByPersonId(personId);
     }
 
