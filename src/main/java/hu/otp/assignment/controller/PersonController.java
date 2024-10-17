@@ -4,9 +4,11 @@ import hu.otp.assignment.dto.PersonResponseDto;
 import hu.otp.assignment.dto.RegisterPersonDto;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/person")
+@Validated
 public interface PersonController {
 
 
