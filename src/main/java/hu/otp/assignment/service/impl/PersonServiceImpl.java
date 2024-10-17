@@ -5,6 +5,7 @@ import hu.otp.assignment.domain.Person;
 import hu.otp.assignment.dto.PersonResponseDto;
 import hu.otp.assignment.dto.RegisterPersonDto;
 import hu.otp.assignment.dto.mapper.PersonMapper;
+import hu.otp.assignment.exception.*;
 import hu.otp.assignment.repository.AddressRepository;
 import hu.otp.assignment.repository.PersonRepository;
 import hu.otp.assignment.service.PersonService;
@@ -23,7 +24,7 @@ public class PersonServiceImpl implements PersonService {
     public PersonResponseDto getPersonById(long id) {
         PersonResponseDto result = null;
         Person person = personRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("There is no Person with id " + id));
+                .orElseThrow(() -> new NoPersonWithSuchIdException(id));
         if(person != null) {
             result = personMapper.entityToResponseDto(person);
         }
@@ -35,7 +36,7 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public void deletePerson(long id) {
         Person person = personRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("There is no Person with id " + id));
+                .orElseThrow(() -> new NoPersonWithSuchIdException(id));
         if(person != null) {
             Address permanent = person.getPermanent();
             permanent.removePerson(person);
@@ -53,19 +54,19 @@ public class PersonServiceImpl implements PersonService {
         person.setName(registerPersonDto.name());
         Address permanent = addressRepository.findById(
                 registerPersonDto.permanentAddressId())
-                .orElseThrow(() -> new RuntimeException("There is no Address with id " + registerPersonDto.permanentAddressId()));
+                .orElseThrow(() -> new NoAddressWithSuchIdException(registerPersonDto.permanentAddressId()));
         if(permanent != null) {
             person.setPermanent(permanent);
         }
         if(registerPersonDto.temporaryAddressId() != null) {
             Address temporary = addressRepository.findById(
                             registerPersonDto.temporaryAddressId())
-                    .orElseThrow(() -> new RuntimeException("There is no Address with id " + registerPersonDto.temporaryAddressId()));
+                    .orElseThrow(() -> new NoAddressWithSuchIdException(registerPersonDto.temporaryAddressId()));
             if(temporary != null) {
                 if(!permanent.equals(temporary)) {
                     person.setTemporary(temporary);
                 } else {
-                    throw new RuntimeException("Permanent and temporary Addresses are not supposed to be the same");
+                    throw new AddressClashException();
                 }
             }
         }
@@ -75,10 +76,10 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public void deleteTemporary(long personId) {
         Person person = personRepository.findById(personId)
-                .orElseThrow(() -> new RuntimeException("There is no Person with id " + personId));
+                .orElseThrow(() -> new NoPersonWithSuchIdException(personId));
         if(person != null) {
             if(person.getTemporary() == null) {
-                throw new RuntimeException("This person has no temporaryAddress to delete");
+                throw new NoTempAddressException(personId);
             }
             Address temporary = person.getTemporary();
             temporary.setPerson(null);
@@ -97,28 +98,27 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public void addTemporaryAddress(long addressId, long personId) {
         Person person = personRepository.findById(personId)
-                .orElseThrow(() -> new RuntimeException("There is no Person with id " + personId));
+                .orElseThrow(() -> new NoPersonWithSuchIdException(personId));
         if(person != null) {
             if(person.getTemporary() != null) {
-                throw new RuntimeException("This person already has a temporary Address");
+                throw new AlreadyHasTempAddressException(personId);
             }
             Address newTemporary = addressRepository.findById(addressId)
-                    .orElseThrow(() -> new RuntimeException("There is no Address with id " + addressId));
+                    .orElseThrow(() -> new NoAddressWithSuchIdException(addressId));
             if(newTemporary != null) {
                 if(newTemporary.isPermanent()) {
-                    throw new RuntimeException("This Address is not temporary but permanent");
+                    throw new AddressIsPermanentException(newTemporary.getId());
                 }
                 if(newTemporary.getPerson() != null) {
-                    throw new RuntimeException("Someone is already associated with this address");
+                    throw new AddressAlreadyInUseException(addressId);
                 }
                 person.setTemporary(newTemporary);
                 newTemporary.setPerson(person);
                 personRepository.save(person);
                 Address addressAgainFromDB = addressRepository.findById(addressId).get();
-                System.out.println("abc");
 //                addressRepository.save(newTemporary);
             } else {
-                throw new RuntimeException("There is no Address with id " + addressId);
+                throw new NoAddressWithSuchIdException(addressId);  //TODO: n fölös?
             }
         }
     }
@@ -126,13 +126,13 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public void changePermanentAddress(long addressId, long personId) {
         Person person = personRepository.findById(personId)
-                .orElseThrow(() -> new RuntimeException("There is no Person with id " + personId));
+                .orElseThrow(() -> new NoPersonWithSuchIdException(personId));
         if(person != null) {
             Address newPermanent = addressRepository.findById(addressId)
-                    .orElseThrow(() -> new RuntimeException("There is no Address with id " + addressId));
+                    .orElseThrow(() -> new NoAddressWithSuchIdException(addressId));
             if(newPermanent != null) {
                 if(!newPermanent.isPermanent()) {
-                    throw new RuntimeException("This address is not permanent");
+                    throw new AddressIsTemporaryException(newPermanent.getId());
                 }
                 if(newPermanent.getPerson() == null) {
                     Address oldPermanent = person.getPermanent();
@@ -142,7 +142,7 @@ public class PersonServiceImpl implements PersonService {
                     newPermanent.setPerson(person);
                     personRepository.save(person);
                 } else {
-                    throw new RuntimeException("Someone is already associated with this address");
+                    throw new AddressAlreadyInUseException(addressId);
                 }
 
             }
@@ -152,7 +152,7 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public void changeName(String name, long id) {
         Person person = personRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("There is no Person with id " + id));
+                .orElseThrow(() -> new NoPersonWithSuchIdException(id));
         if(person != null) {
             person.setName(name);
             personRepository.save(person);
