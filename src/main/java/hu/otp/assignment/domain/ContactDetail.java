@@ -16,7 +16,7 @@ public class ContactDetail {
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "person_id")
     @JsonManagedReference
     private Person person;

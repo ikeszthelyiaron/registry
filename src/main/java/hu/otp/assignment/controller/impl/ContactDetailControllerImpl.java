@@ -3,6 +3,7 @@ package hu.otp.assignment.controller.impl;
 import hu.otp.assignment.controller.ContactDetailController;
 import hu.otp.assignment.domain.Platform;
 import hu.otp.assignment.dto.ContactDetailDto;
+import hu.otp.assignment.dto.PlatformDto;
 import hu.otp.assignment.service.ContactDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,13 +17,13 @@ public class ContactDetailControllerImpl implements ContactDetailController {
     private final ContactDetailService contactDetailService;
 
     @Override
-    public void deleteContactDetail(long personId, Platform platform) {
-        contactDetailService.deleteContactDetail(personId, platform);
+    public void deleteContactDetail(long personId, PlatformDto platformDto) {
+        contactDetailService.deleteContactDetail(personId, platformDto);
     }
 
     @Override
-    public void editContactDetail(ContactDetailDto contactDetailDto) {
-        contactDetailService.editContactDetail(contactDetailDto);
+    public void editContactDetail(ContactDetailDto contactDetailDto, long id) {
+        contactDetailService.editContactDetail(contactDetailDto, id);
     }
 
     @Override

@@ -38,4 +38,16 @@ public class Person {
     @ToString.Exclude
     private List<ContactDetail> contactDetails;
 
+    public void addContactDetail(ContactDetail contactDetail) {
+        contactDetails.add(contactDetail);
+    }
+
+    public void removeContactDetail(Platform platform) {
+        contactDetails.removeIf(contactDetail -> contactDetail.getPlatform().equals(platform));
+    }
+
+    public void removeContactDetailById(long contactDetailId) {
+        contactDetails.removeIf(contactDetail -> contactDetail.getId().equals(contactDetailId));
+    }
+
 }

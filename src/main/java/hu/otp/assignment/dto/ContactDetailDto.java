@@ -10,6 +10,6 @@ public record ContactDetailDto(
         @NotNull Platform platform,
         @NotBlank
         @Size(min = 5, message = "The identifier has to be at least 5 characters long") String identifier,
-        @Positive(message = "Person ID has to be a positive number") Long personId
+        @Positive(message = "Person ID has to be a positive number") long personId
         ) {
 }
