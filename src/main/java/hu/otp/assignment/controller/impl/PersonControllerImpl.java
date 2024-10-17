@@ -27,4 +27,29 @@ public class PersonControllerImpl implements PersonController {
     public void createPerson(RegisterPersonDto registerPersonDto) {
         personService.createPerson(registerPersonDto);
     }
+
+    @Override
+    public void deleteTemporary(long personId) {
+        personService.deleteTemporary(personId);
+    }
+
+    @Override
+    public void changeTemporaryAddress(long addressId, long personId) {
+        personService.changeTemporaryAddress(addressId, personId);
+    }
+
+    @Override
+    public void addTemporaryAddress(long addressId, long personId) {
+        personService.addTemporaryAddress(addressId, personId);
+    }
+
+    @Override
+    public void changePermanentAddress(long addressId, long personId) {
+        personService.changePermanentAddress(addressId, personId);
+    }
+
+    @Override
+    public void changeName(String name, long id) {
+        personService.changeName(name, id);
+    }
 }

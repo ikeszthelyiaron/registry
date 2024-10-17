@@ -9,14 +9,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/person")
 public interface PersonController {
 
-    /*
-    UPDATE:
-    1. név mód
-    2. perm Addr mód
-    3. temp Add hoz ad
-    4. temp Add mód
-    5. temp Add trl
-     */
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -27,5 +19,20 @@ public interface PersonController {
 
     @GetMapping("/{id}")
     PersonResponseDto getPersonById(@PathVariable long id);
+
+    @PutMapping("/{id}")
+    void changeName(@RequestBody String name, @PathVariable long id);
+
+    @PutMapping("/changePermanent/{personId}/{addressId}")
+    void changePermanentAddress(@PathVariable long personId, @PathVariable long addressId);
+
+    @PutMapping("/addTemporary/{personId}/{addressId}")
+    void addTemporaryAddress(@PathVariable long personId, @PathVariable long addressId);
+
+    @PutMapping("/changeTemporary/{personId}/{addressId}")
+    void changeTemporaryAddress(@PathVariable long personId, @PathVariable long addressId);
+
+    @DeleteMapping("/deleteTemporary/{personId}")
+    void deleteTemporary(@PathVariable long personId);
 
 }

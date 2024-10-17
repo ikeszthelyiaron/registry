@@ -8,6 +8,8 @@ import hu.otp.assignment.dto.mapper.PersonMapper;
 import hu.otp.assignment.repository.AddressRepository;
 import hu.otp.assignment.repository.PersonRepository;
 import hu.otp.assignment.service.PersonService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +45,7 @@ public class PersonServiceImpl implements PersonService {
             if(temporary != null) {
                 temporary.removePerson(person);
             }
-            personRepository.delete(person);    //elv trl a ContDe-kt is --> el őrz!
+            personRepository.delete(person);
         }
     }
 
@@ -70,5 +72,92 @@ public class PersonServiceImpl implements PersonService {
             }
         }
         personRepository.save(person);
+    }
+
+    @Override
+    public void deleteTemporary(long personId) {
+        Person person = personRepository.findById(personId)
+                .orElseThrow(() -> new RuntimeException("There is no Person with id " + personId));
+        if(person != null) {
+            if(person.getTemporary() == null) {
+                throw new RuntimeException("This person has no temporaryAddress to delete");
+            }
+            Address temporary = person.getTemporary();
+            temporary.setPerson(null);
+            person.setTemporary(null);
+            personRepository.save(person);
+            addressRepository.save(temporary);
+        }
+    }
+
+    @Override
+    public void changeTemporaryAddress(long addressId, long personId) {
+        deleteTemporary(personId);
+        addTemporaryAddress(addressId, personId);
+    }
+
+    @Override
+    public void addTemporaryAddress(long addressId, long personId) {
+        Person person = personRepository.findById(personId)
+                .orElseThrow(() -> new RuntimeException("There is no Person with id " + personId));
+        if(person != null) {
+            if(person.getTemporary() != null) {
+                throw new RuntimeException("This person already has a temporary Address");
+            }
+            Address newTemporary = addressRepository.findById(addressId)
+                    .orElseThrow(() -> new RuntimeException("There is no Address with id " + addressId));
+            if(newTemporary != null) {
+                if(newTemporary.isPermanent()) {
+                    throw new RuntimeException("This Address is not temporary but permanent");
+                }
+                if(newTemporary.getPerson() != null) {
+                    throw new RuntimeException("Someone is already associated with this address");
+                }
+                person.setTemporary(newTemporary);
+                newTemporary.setPerson(person);
+                personRepository.save(person);
+                Address addressAgainFromDB = addressRepository.findById(addressId).get();
+                System.out.println("abc");
+//                addressRepository.save(newTemporary);
+            } else {
+                throw new RuntimeException("There is no Address with id " + addressId);
+            }
+        }
+    }
+
+    @Override
+    public void changePermanentAddress(long addressId, long personId) {
+        Person person = personRepository.findById(personId)
+                .orElseThrow(() -> new RuntimeException("There is no Person with id " + personId));
+        if(person != null) {
+            Address newPermanent = addressRepository.findById(addressId)
+                    .orElseThrow(() -> new RuntimeException("There is no Address with id " + addressId));
+            if(newPermanent != null) {
+                if(!newPermanent.isPermanent()) {
+                    throw new RuntimeException("This address is not permanent");
+                }
+                if(newPermanent.getPerson() == null) {
+                    Address oldPermanent = person.getPermanent();
+                    oldPermanent.setPerson(null);
+                    addressRepository.save(oldPermanent);
+                    person.setPermanent(newPermanent);
+                    newPermanent.setPerson(person);
+                    personRepository.save(person);
+                } else {
+                    throw new RuntimeException("Someone is already associated with this address");
+                }
+
+            }
+        }
+    }
+
+    @Override
+    public void changeName(String name, long id) {
+        Person person = personRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("There is no Person with id " + id));
+        if(person != null) {
+            person.setName(name);
+            personRepository.save(person);
+        }
     }
 }
