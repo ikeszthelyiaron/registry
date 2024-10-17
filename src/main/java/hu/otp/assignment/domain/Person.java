@@ -50,4 +50,12 @@ public class Person {
         contactDetails.removeIf(contactDetail -> contactDetail.getId().equals(contactDetailId));
     }
 
+    public boolean hasSuchPlatform(Platform platform) {
+        return contactDetails.stream().anyMatch(contactDetail -> contactDetail.getPlatform().equals(platform));
+    }
+
+    public ContactDetail findByPlatform(Platform platform) {
+        return contactDetails.stream().filter(contactDetail -> contactDetail.getPlatform().equals(platform)).findFirst().orElse(null);
+    }
+
 }

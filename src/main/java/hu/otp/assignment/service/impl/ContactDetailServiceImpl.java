@@ -6,10 +6,7 @@ import hu.otp.assignment.domain.Platform;
 import hu.otp.assignment.dto.ContactDetailDto;
 import hu.otp.assignment.dto.PlatformDto;
 import hu.otp.assignment.dto.mapper.ContactDetailMapper;
-import hu.otp.assignment.exception.ContactDetailAlreadyExistsException;
-import hu.otp.assignment.exception.NoContactDetailWithSuchIdException;
-import hu.otp.assignment.exception.NoPersonWithSuchIdException;
-import hu.otp.assignment.exception.NoSuchContactDetailException;
+import hu.otp.assignment.exception.*;
 import hu.otp.assignment.repository.ContactDetailRepository;
 import hu.otp.assignment.repository.PersonRepository;
 import hu.otp.assignment.service.ContactDetailService;
@@ -37,7 +34,7 @@ public class ContactDetailServiceImpl implements ContactDetailService {
         if(contactDetail.isEmpty()) {
             throw new NoSuchContactDetailException(personId, platform);
         } else {
-            person.removeContactDetail(platform);       //CASCADE miatt n fölösl?
+            person.removeContactDetail(platform);
             contactDetailRepository.delete(contactDetail.get());
         }
     }
@@ -48,15 +45,21 @@ public class ContactDetailServiceImpl implements ContactDetailService {
                 .orElseThrow(() -> new NoContactDetailWithSuchIdException(id));
         Person person = personRepository.findById(contactDetailDto.personId())
                 .orElseThrow(() -> new NoPersonWithSuchIdException(contactDetailDto.personId()));
-        contactDetail.setPlatform(contactDetailDto.platform());
-        contactDetail.setIdentifier(contactDetailDto.identifier());
-        contactDetail.setPerson(person);
-        if(contactDetailExists(contactDetail)) {
-            throw new ContactDetailAlreadyExistsException(contactDetail.getPlatform(), contactDetail.getIdentifier());
+        if(person.hasSuchPlatform(contactDetailDto.platform())) {
+            if(!person.findByPlatform(contactDetailDto.platform()).getId().equals(id)) {
+                throw new AlreadyPresentOnPlatformException(contactDetailDto.platform());
+            } else {
+                contactDetail.setPlatform(contactDetailDto.platform());
+                contactDetail.setIdentifier(contactDetailDto.identifier());
+                contactDetail.setPerson(person);
+                if(contactDetailExists(contactDetail)) {
+                    throw new ContactDetailAlreadyExistsException(contactDetail.getPlatform(), contactDetail.getIdentifier());
+                }
+                person.removeContactDetailById(id);
+                person.addContactDetail(contactDetail);
+                contactDetailRepository.save(contactDetail);
+            }
         }
-        person.removeContactDetailById(id);
-        person.addContactDetail(contactDetail);
-        contactDetailRepository.save(contactDetail);
     }
 
     private boolean contactDetailExists(ContactDetail contactDetail) {
@@ -72,6 +75,9 @@ public class ContactDetailServiceImpl implements ContactDetailService {
         }
         Person person = personRepository.findById(contactDetailDto.personId())
                 .orElseThrow(() -> new NoPersonWithSuchIdException(contactDetailDto.personId()));
+        if(person.hasSuchPlatform(contactDetailDto.platform())) {
+            throw new AlreadyPresentOnPlatformException(contactDetailDto.platform());
+        }
         person.addContactDetail(contactDetail);
         contactDetailRepository.save(contactDetail);
     }

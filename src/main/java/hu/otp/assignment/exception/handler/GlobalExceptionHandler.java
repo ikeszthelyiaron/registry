@@ -108,4 +108,14 @@ public class GlobalExceptionHandler {
         log.error(VALIDATION_ERROR_MESSAGE, validationError.field(), validationError.errorMessage());
         return validationError;
     }
+
+    @ExceptionHandler({AlreadyPresentOnPlatformException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ValidationError handleAlreadyPresentOnPlatformException(AlreadyPresentOnPlatformException exception) {
+        ValidationError validationError = new ValidationError("Platform", exception.getMessage());
+        log.error(VALIDATION_ERROR_MESSAGE, validationError.field(), validationError.errorMessage());
+        return validationError;
+    }
+
+
 }

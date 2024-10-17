@@ -52,16 +52,17 @@ public class PersonServiceImpl implements PersonService {
     public void createPerson(RegisterPersonDto registerPersonDto) {
         Person person = new Person();
         person.setName(registerPersonDto.name());
-        Address permanent = addressRepository.findById(
-                registerPersonDto.permanentAddressId())
-                .orElseThrow(() -> new NoAddressWithSuchIdException(registerPersonDto.permanentAddressId()));
+        Address permanent = addressRepository.findById(registerPersonDto.permanentAddressId())
+                .orElseThrow(() ->
+                        new NoAddressWithSuchIdException(registerPersonDto.permanentAddressId()));
         if(permanent != null) {
             person.setPermanent(permanent);
         }
         if(registerPersonDto.temporaryAddressId() != null) {
             Address temporary = addressRepository.findById(
                             registerPersonDto.temporaryAddressId())
-                    .orElseThrow(() -> new NoAddressWithSuchIdException(registerPersonDto.temporaryAddressId()));
+                    .orElseThrow(() ->
+                            new NoAddressWithSuchIdException(registerPersonDto.temporaryAddressId()));
             if(temporary != null) {
                 if(!permanent.equals(temporary)) {
                     person.setTemporary(temporary);
@@ -85,7 +86,6 @@ public class PersonServiceImpl implements PersonService {
             temporary.setPerson(null);
             person.setTemporary(null);
             personRepository.save(person);
-            addressRepository.save(temporary);
         }
     }
 
@@ -115,10 +115,6 @@ public class PersonServiceImpl implements PersonService {
                 person.setTemporary(newTemporary);
                 newTemporary.setPerson(person);
                 personRepository.save(person);
-                Address addressAgainFromDB = addressRepository.findById(addressId).get();
-//                addressRepository.save(newTemporary);
-            } else {
-                throw new NoAddressWithSuchIdException(addressId);  //TODO: n fölös?
             }
         }
     }
@@ -137,7 +133,6 @@ public class PersonServiceImpl implements PersonService {
                 if(newPermanent.getPerson() == null) {
                     Address oldPermanent = person.getPermanent();
                     oldPermanent.setPerson(null);
-                    addressRepository.save(oldPermanent);
                     person.setPermanent(newPermanent);
                     newPermanent.setPerson(person);
                     personRepository.save(person);
