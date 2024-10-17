@@ -8,8 +8,6 @@ import hu.otp.assignment.dto.mapper.PersonMapper;
 import hu.otp.assignment.repository.AddressRepository;
 import hu.otp.assignment.repository.PersonRepository;
 import hu.otp.assignment.service.PersonService;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

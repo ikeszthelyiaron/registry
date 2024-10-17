@@ -36,8 +36,4 @@ public class ContactDetailControllerImpl implements ContactDetailController {
         return contactDetailService.getContactDetailsByPersonId(personId);
     }
 
-    @Override
-    public void createContactDetail(ContactDetailDto contactDetailDto) {
-        contactDetailService.createContactDetail(contactDetailDto);
-    }
 }

@@ -9,7 +9,6 @@ import java.util.List;
 
 public interface ContactDetailService {
 
-    void createContactDetail(ContactDetailDto contactDetailDto);
 
     List<ContactDetailDto> getContactDetailsByPersonId(@PathVariable long personId);
 

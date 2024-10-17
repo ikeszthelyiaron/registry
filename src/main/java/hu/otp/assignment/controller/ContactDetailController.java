@@ -15,15 +15,10 @@ import java.util.List;
 public interface ContactDetailController {
 
 
-
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    void createContactDetail(@RequestBody @Valid ContactDetailDto contactDetailDto);
-
     @GetMapping("/{personId}")
     List<ContactDetailDto> getContactDetailsByPersonId(@PathVariable long personId);
 
-    @PutMapping("addContactDetail")
+    @PutMapping("/addContactDetail")
     void addContactDetailToPerson(@RequestBody @Valid ContactDetailDto contactDetailDto);
 
     @PutMapping("/editContactDetail/{id}")

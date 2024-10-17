@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Data
 @NoArgsConstructor
 @Table
@@ -28,5 +30,16 @@ public class ContactDetail {
     @Column(name = "identifier")
     private String identifier;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ContactDetail that = (ContactDetail) o;
+        return platform == that.platform && Objects.equals(identifier, that.identifier);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(platform, identifier);
+    }
 }

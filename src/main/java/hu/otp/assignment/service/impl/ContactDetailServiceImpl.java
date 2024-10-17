@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,14 +28,15 @@ public class ContactDetailServiceImpl implements ContactDetailService {
         Person person = personRepository.findById(personId)
                 .orElseThrow(() -> new RuntimeException("There is no Person with id " + personId));
         Platform platform = platformDto.platform();
-        ContactDetail contactDetail = contactDetailRepository
-                .findByPersonIdAndPlatform(personId, platform).get();
-                if(contactDetail == null) {
-                    throw new RuntimeException("There is no Contact Detail with id "
-                            + contactDetail.getId() + " and Platform: " + platform );
-                }
-        person.removeContactDetail(platform);       //CASCADE miatt n fölösl?
-        contactDetailRepository.delete(contactDetail);
+        Optional<ContactDetail> contactDetail = contactDetailRepository
+                .findByPersonIdAndPlatform(personId, platform);
+        if(contactDetail.isEmpty()) {
+            throw new RuntimeException("There is no Contact Detail with personId "
+                    + personId + " and Platform: " + platform );
+        } else {
+            person.removeContactDetail(platform);       //CASCADE miatt n fölösl?
+            contactDetailRepository.delete(contactDetail.get());
+        }
     }
 
     @Override
@@ -46,14 +48,27 @@ public class ContactDetailServiceImpl implements ContactDetailService {
         contactDetail.setPlatform(contactDetailDto.platform());
         contactDetail.setIdentifier(contactDetailDto.identifier());
         contactDetail.setPerson(person);
+        if(contactDetailExists(contactDetail)) {
+            throw new RuntimeException("There is already a Contact Detail with this Platform and identifier: "
+                    + contactDetail.getPlatform() + " " + contactDetail.getIdentifier());
+        }
         person.removeContactDetailById(id);
         person.addContactDetail(contactDetail);
         contactDetailRepository.save(contactDetail);
     }
 
+    private boolean contactDetailExists(ContactDetail contactDetail) {
+        return contactDetailRepository.
+                existsByPlatformAndIdentifier(contactDetail.getPlatform(), contactDetail.getIdentifier());
+    }
+
     @Override
     public void addContactDetailToPerson(ContactDetailDto contactDetailDto) {
         ContactDetail contactDetail = contactDetailMapper.dtoToEntity(contactDetailDto);
+        if(contactDetailExists(contactDetail)) {
+            throw new RuntimeException("There is already a Contact Detail with this Platform and identifier: "
+                    + contactDetail.getPlatform() + " " + contactDetail.getIdentifier());
+        }
         Person person = personRepository.findById(contactDetailDto.personId())
                 .orElseThrow(() -> new RuntimeException("There is no Person with id " + contactDetailDto.personId()));
         person.addContactDetail(contactDetail);
@@ -67,12 +82,4 @@ public class ContactDetailServiceImpl implements ContactDetailService {
         return contactDetailRepository.findAllByPersonId(personId);
     }
 
-    @Override
-    public void createContactDetail(ContactDetailDto contactDetailDto) {
-        Person person = personRepository.findById(contactDetailDto.personId())
-                        .orElseThrow(() -> new RuntimeException("There is no Person with id " + contactDetailDto.personId()));
-        ContactDetail contactDetail = contactDetailMapper.dtoToEntity(contactDetailDto);
-        person.addContactDetail(contactDetail);
-        contactDetailRepository.save(contactDetail);
-    }
 }

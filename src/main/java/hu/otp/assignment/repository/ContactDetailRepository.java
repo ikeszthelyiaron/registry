@@ -20,4 +20,8 @@ public interface ContactDetailRepository extends ListCrudRepository<ContactDetai
     @Query("SELECT cd ContactDetail FROM ContactDetail cd WHERE cd.platform = :platform " +
             "AND cd.person.id = :personId")
     Optional<ContactDetail> findByPersonIdAndPlatform(long personId, Platform platform);
+
+
+    boolean existsByPlatformAndIdentifier(Platform platform, String identifier);
+
 }
