@@ -1,20 +1,32 @@
 package hu.otp.assignment.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
+import hu.otp.assignment.domain.Platform;
+import hu.otp.assignment.dto.ContactDetailDto;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequestMapping("/contactDetails")
 public interface ContactDetailController {
 
-    /*
-    1. Create: DTO
-    2. Read: Id
-    3. ContD: Person-höz új hoz ad
-    4. ContD: meglév módos
-    update, delete: id n kel
-     */
 
+    //TODO: dto-k validálása midnenhol
 
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    void createContactDetail(ContactDetailDto contactDetailDto);
 
+    @GetMapping("/{personId}")
+    List<ContactDetailDto> getContactDetailsByPersonId(@PathVariable long personId);
 
+    @PutMapping("addContactDetail")
+    void addContactDetailToPerson(@RequestBody ContactDetailDto contactDetailDto);
+
+    @PutMapping("/editContactDetail")
+    void editContactDetail(ContactDetailDto contactDetailDto);
+
+    @DeleteMapping("/deleteContactDetail/{personId}")
+    void deleteContactDetail(@PathVariable long personId, @RequestBody Platform platform);
 
 }
