@@ -62,7 +62,7 @@ public class ContactDetailServiceImpl implements ContactDetailService {
         }
     }
 
-    private boolean contactDetailExists(ContactDetail contactDetail) {
+    public boolean contactDetailExists(ContactDetail contactDetail) {
         return contactDetailRepository.
                 existsByPlatformAndIdentifier(contactDetail.getPlatform(), contactDetail.getIdentifier());
     }
