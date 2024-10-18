@@ -22,8 +22,7 @@ import static hu.otp.assignment.domain.Platform.SKYPE;
 
 import static hu.otp.assignment.domain.Platform.TWITTER;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ContactDetailServiceImplTests {
@@ -156,7 +155,7 @@ public class ContactDetailServiceImplTests {
 
         contactDetailServiceImpl.deleteContactDetail(1, platformDto);
         assertTrue(person.getContactDetails().isEmpty());
-        assertTrue(contactDetailRepository.findAll().isEmpty());
+        verify(contactDetailRepository).delete(contactDetail);
     }
 
     @Test

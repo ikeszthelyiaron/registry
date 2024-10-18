@@ -10,6 +10,7 @@ import hu.otp.assignment.repository.PersonRepository;
 import hu.otp.assignment.service.impl.PersonServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -18,11 +19,10 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import static hu.otp.assignment.domain.Platform.SKYPE;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import static hu.otp.assignment.domain.Platform.TWITTER;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class PersonServiceImplTests {
@@ -181,6 +181,98 @@ public class PersonServiceImplTests {
                 () -> personServiceImpl.changeName("Bill", 2));
     }
 
+    @Test
+    void givenPersonInDB_WhenDeletePerson_ThenDeleteMethodInvoked() throws Exception {
+        Person person = new Person();
+        Address address = new Address();
+        person.setPermanent(address);
+        when(personRepository.findById(1L)).thenReturn(Optional.of(person));
+
+        personServiceImpl.deletePerson(1);
+        verify(personRepository).delete(person);
+    }
+
+    @Test
+    void givenPerson_WhenChangeName_ThenNameChanged() throws Exception {
+        Person person = new Person();
+        person.setName("wrong name");
+        when(personRepository.findById(1L)).thenReturn(Optional.of(person));
+        personServiceImpl.changeName("correct name", 1);
+        assertEquals("correct name", person.getName());
+        verify(personRepository).save(person);
+    }
+
+    @Test
+    void givenPerson_WhenChangePermanentAddress_ThenPermanentAddressChanged() throws Exception {
+        Person person = new Person();
+        Address firstAddress = new Address();
+        firstAddress.setCity("Debrecen");
+        firstAddress.setPerson(person);
+        firstAddress.setPermanent(true);
+        Address secondAddress = new Address();
+        secondAddress.setCity("Budapest");
+        secondAddress.setPermanent(true);
+        person.setPermanent(firstAddress);
+        when(addressRepository.findById(2L)).thenReturn(Optional.of(secondAddress));
+        when(personRepository.findById(1L)).thenReturn(Optional.of(person));
+        personServiceImpl.changePermanentAddress(2, 1);
+        assertEquals(secondAddress, person.getPermanent());
+        assertEquals(person, secondAddress.getPerson());
+        verify(personRepository).save(person);
+    }
+
+    @Test
+    void givenRegisterPersonDto_WhenCreatePerson_ThenPersonCreated() throws Exception {
+        RegisterPersonDto registerPersonDto = new RegisterPersonDto("Legit name", 1L, 2L);
+        Address permanent = new Address();
+        permanent.setCity("Budapest");
+        Address temporary = new Address();
+        temporary.setCity("Debrecen");
+        when(addressRepository.findById(1L)).thenReturn(Optional.of(permanent));
+        when(addressRepository.findById(2L)).thenReturn(Optional.of(temporary));
+
+        personServiceImpl.createPerson(registerPersonDto);
+        ArgumentCaptor<Person> personCaptor = ArgumentCaptor.forClass(Person.class);
+        verify(personRepository).save(personCaptor.capture());
+        Person person = personCaptor.getValue();
+        assertEquals(permanent, person.getPermanent());
+        assertEquals(temporary, person.getTemporary());
+        assertEquals("Legit name", person.getName());
+    }
+
+    @Test
+    void givenPersonWithoutTemporary_WhenAddTemporaryAddress_ThenAddressAdded() throws Exception {
+        Person person = new Person();
+        Address address = new Address();
+        address.setPermanent(false);
+        address.setCity("Budapest");
+        when(personRepository.findById(1L)).thenReturn(Optional.of(person));
+        when(addressRepository.findById(1L)).thenReturn(Optional.of(address));
+        personServiceImpl.addTemporaryAddress(1, 1);
+        ArgumentCaptor<Person> personCaptor = ArgumentCaptor.forClass(Person.class);
+        verify(personRepository).save(personCaptor.capture());
+        Person person1 = personCaptor.getValue();
+        assertEquals(address, person1.getTemporary());
+        assertEquals(person1, address.getPerson());
+    }
+
+    @Test
+    void givenPersonWithTemporary_WhenDeleteTemporaryAddress_ThenAddressRemoved() throws Exception {
+        Person person = new Person();
+        Address address = new Address();
+        address.setPermanent(false);
+        address.setCity("Budapest");
+        person.setTemporary(address);
+
+        when(personRepository.findById(1L)).thenReturn(Optional.of(person));
+        personServiceImpl.deleteTemporary(1);
+        ArgumentCaptor<Person> personCaptor = ArgumentCaptor.forClass(Person.class);
+        verify(personRepository).save(personCaptor.capture());
+        Person person1 = personCaptor.getValue();
+        assertNull(person1.getTemporary());
+    }
 
 
-}
+
+
+    }

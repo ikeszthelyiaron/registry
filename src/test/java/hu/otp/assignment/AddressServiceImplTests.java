@@ -2,6 +2,7 @@ package hu.otp.assignment;
 
 import hu.otp.assignment.domain.Address;
 import hu.otp.assignment.domain.Person;
+import hu.otp.assignment.dto.AddressDto;
 import hu.otp.assignment.dto.mapper.AddressMapper;
 import hu.otp.assignment.exception.NoAddressWithSuchIdException;
 import hu.otp.assignment.exception.PermAddressInUseException;
@@ -18,9 +19,9 @@ import javax.swing.text.html.Option;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -60,4 +61,25 @@ public class AddressServiceImplTests {
                 () -> addressServiceImpl.getAddressById(1));
     }
 
+    @Test
+    void givenAddressInDb_WhenDeleteAddressById_ThenAddressDeleted() throws Exception {
+        Address address = new Address();
+        address.setId(1L);
+        address.setPermanent(true);
+        when(addressRepository.findById(1L)).thenReturn(Optional.of(address));
+        addressServiceImpl.deleteAddressById(1);
+        verify(addressRepository).delete(address);
+    }
+
+    @Test
+    void givenDto_WhenCreateAddress_ThenAddressCreated() throws Exception {
+        AddressDto addressDto = new AddressDto(2000, "Szentendre",null, null, true);
+        Address address = new Address();
+        address.setZipCode(addressDto.zipCode());
+        address.setCity(addressDto.city());
+        address.setPermanent(addressDto.isPermanent());
+        when(addressMapper.dtoToEntity(addressDto)).thenReturn(address);
+        addressServiceImpl.createAddress(addressDto);
+        verify(addressRepository).save(address);
+    }
 }
