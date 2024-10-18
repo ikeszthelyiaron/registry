@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import static hu.otp.assignment.domain.Platform.SKYPE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import static hu.otp.assignment.domain.Platform.TWITTER;
@@ -27,7 +26,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ServiceImplTests {
+public class ContactDetailServiceImplTests {
 
 
     @Mock
