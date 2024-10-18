@@ -2,6 +2,7 @@ package hu.otp.assignment.service.impl;
 
 import hu.otp.assignment.domain.Address;
 import hu.otp.assignment.domain.Person;
+import hu.otp.assignment.dto.PersonNameDto;
 import hu.otp.assignment.dto.PersonResponseDto;
 import hu.otp.assignment.dto.RegisterPersonDto;
 import hu.otp.assignment.dto.mapper.PersonMapper;
@@ -57,6 +58,7 @@ public class PersonServiceImpl implements PersonService {
                         new NoAddressWithSuchIdException(registerPersonDto.permanentAddressId()));
         if(permanent != null) {
             person.setPermanent(permanent);
+            permanent.setPerson(person);
         }
         if(registerPersonDto.temporaryAddressId() != null) {
             Address temporary = addressRepository.findById(
@@ -145,11 +147,11 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public void changeName(String name, long id) {
+    public void changeName(PersonNameDto personNameDto, long id) {
         Person person = personRepository.findById(id)
                 .orElseThrow(() -> new NoPersonWithSuchIdException(id));
         if(person != null) {
-            person.setName(name);
+            person.setName(personNameDto.name());
             personRepository.save(person);
         }
     }

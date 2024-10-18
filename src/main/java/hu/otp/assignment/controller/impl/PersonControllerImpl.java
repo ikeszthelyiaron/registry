@@ -1,6 +1,7 @@
 package hu.otp.assignment.controller.impl;
 
 import hu.otp.assignment.controller.PersonController;
+import hu.otp.assignment.dto.PersonNameDto;
 import hu.otp.assignment.dto.PersonResponseDto;
 import hu.otp.assignment.dto.RegisterPersonDto;
 import hu.otp.assignment.service.PersonService;
@@ -49,7 +50,7 @@ public class PersonControllerImpl implements PersonController {
     }
 
     @Override
-    public void changeName(String name, long id) {
-        personService.changeName(name, id);
+    public void changeName(PersonNameDto personNameDto, long id) {
+        personService.changeName(personNameDto, id);
     }
 }

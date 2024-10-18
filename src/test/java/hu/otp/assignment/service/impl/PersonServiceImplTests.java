@@ -2,6 +2,7 @@ package hu.otp.assignment.service.impl;
 
 import hu.otp.assignment.domain.Address;
 import hu.otp.assignment.domain.Person;
+import hu.otp.assignment.dto.PersonNameDto;
 import hu.otp.assignment.dto.RegisterPersonDto;
 import hu.otp.assignment.dto.mapper.PersonMapper;
 import hu.otp.assignment.exception.*;
@@ -173,7 +174,7 @@ public class PersonServiceImplTests {
     @Test
     void givenNoPerson_WhenChangeName_ThenExceptionThrown() throws Exception {
         assertThrows(NoPersonWithSuchIdException.class,
-                () -> personServiceImpl.changeName("Bill", 2));
+                () -> personServiceImpl.changeName(new PersonNameDto("Bill"), 2));
     }
 
     @Test
@@ -192,7 +193,7 @@ public class PersonServiceImplTests {
         Person person = new Person();
         person.setName("wrong name");
         when(personRepository.findById(1L)).thenReturn(Optional.of(person));
-        personServiceImpl.changeName("correct name", 1);
+        personServiceImpl.changeName(new PersonNameDto("correct name"), 1);
         assertEquals("correct name", person.getName());
         verify(personRepository).save(person);
     }

@@ -2,7 +2,7 @@ spring:
   application:
     name: registry
   datasource:
-    url: jdbc:sqlserver://localhost:1433;databaseName=abc;createDatabaseIfNotExist=true;encrypt=true;trustServerCertificate=true;
+    url: jdbc:sqlserver://localhost:1433;databaseName=registry_db;createDatabaseIfNotExist=true;encrypt=true;trustServerCertificate=true;
     username: sa
     password: YourPassword123
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
@@ -11,5 +11,6 @@ spring:
 #    properties:
     hibernate:
       ddl-auto: update
-#      dialect: org.hibernate.dialect.SQLServerDialect
+    properties:
+      dialect: org.hibernate.dialect.SQLServerDialect
 #      format_sql: true

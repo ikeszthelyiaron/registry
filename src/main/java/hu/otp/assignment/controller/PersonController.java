@@ -1,5 +1,6 @@
 package hu.otp.assignment.controller;
 
+import hu.otp.assignment.dto.PersonNameDto;
 import hu.otp.assignment.dto.PersonResponseDto;
 import hu.otp.assignment.dto.RegisterPersonDto;
 import jakarta.validation.Valid;
@@ -23,7 +24,7 @@ public interface PersonController {
     PersonResponseDto getPersonById(@PathVariable long id);
 
     @PutMapping("/{id}")
-    void changeName(@RequestBody String name, @PathVariable long id);
+    void changeName(@RequestBody @Valid PersonNameDto personNameDto, @PathVariable long id);
 
     @PutMapping("/change-permanent/{personId}/{addressId}")
     void changePermanentAddress(@PathVariable long personId, @PathVariable long addressId);
