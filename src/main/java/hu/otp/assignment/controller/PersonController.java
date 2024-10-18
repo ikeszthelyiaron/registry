@@ -25,16 +25,16 @@ public interface PersonController {
     @PutMapping("/{id}")
     void changeName(@RequestBody String name, @PathVariable long id);
 
-    @PutMapping("/changePermanent/{personId}/{addressId}")
+    @PutMapping("/change-permanent/{personId}/{addressId}")
     void changePermanentAddress(@PathVariable long personId, @PathVariable long addressId);
 
-    @PutMapping("/addTemporary/{personId}/{addressId}")
+    @PutMapping("/add-temporary/{personId}/{addressId}")
     void addTemporaryAddress(@PathVariable long personId, @PathVariable long addressId);
 
-    @PutMapping("/changeTemporary/{personId}/{addressId}")
+    @PutMapping("/change-temporary/{personId}/{addressId}")
     void changeTemporaryAddress(@PathVariable long personId, @PathVariable long addressId);
 
-    @DeleteMapping("/deleteTemporary/{personId}")
+    @DeleteMapping("/delete-temporary/{personId}")
     void deleteTemporary(@PathVariable long personId);
 
 }

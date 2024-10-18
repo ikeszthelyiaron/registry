@@ -1,4 +1,4 @@
-package hu.otp.assignment;
+package hu.otp.assignment.service.impl;
 
 import hu.otp.assignment.domain.ContactDetail;
 import hu.otp.assignment.domain.Person;
@@ -8,7 +8,6 @@ import hu.otp.assignment.dto.mapper.ContactDetailMapper;
 import hu.otp.assignment.exception.*;
 import hu.otp.assignment.repository.ContactDetailRepository;
 import hu.otp.assignment.repository.PersonRepository;
-import hu.otp.assignment.service.impl.ContactDetailServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

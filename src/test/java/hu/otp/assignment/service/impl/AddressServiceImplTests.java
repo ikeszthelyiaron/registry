@@ -1,4 +1,4 @@
-package hu.otp.assignment;
+package hu.otp.assignment.service.impl;
 
 import hu.otp.assignment.domain.Address;
 import hu.otp.assignment.domain.Person;
@@ -8,14 +8,11 @@ import hu.otp.assignment.exception.NoAddressWithSuchIdException;
 import hu.otp.assignment.exception.PermAddressInUseException;
 import hu.otp.assignment.repository.AddressRepository;
 import hu.otp.assignment.repository.PersonRepository;
-import hu.otp.assignment.service.impl.AddressServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import javax.swing.text.html.Option;
 
 import java.util.Optional;
 

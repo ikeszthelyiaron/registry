@@ -18,13 +18,13 @@ public interface ContactDetailController {
     @GetMapping("/{personId}")
     List<ContactDetailDto> getContactDetailsByPersonId(@PathVariable long personId);
 
-    @PutMapping("/addContactDetail")
+    @PutMapping("/add-contactdetail")
     void addContactDetailToPerson(@RequestBody @Valid ContactDetailDto contactDetailDto);
 
-    @PutMapping("/editContactDetail/{id}")
+    @PutMapping("/edit-contactdetail/{id}")
     void editContactDetail(@RequestBody @Valid ContactDetailDto contactDetailDto, @PathVariable long id);
 
-    @DeleteMapping("/deleteContactDetail/{personId}")
+    @DeleteMapping("/delete-contactdetail/{personId}")
     void deleteContactDetail(@PathVariable long personId, @RequestBody @Valid PlatformDto platformDto);
 
 }
