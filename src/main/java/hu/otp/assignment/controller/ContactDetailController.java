@@ -1,10 +1,8 @@
 package hu.otp.assignment.controller;
 
-import hu.otp.assignment.domain.Platform;
 import hu.otp.assignment.dto.ContactDetailDto;
 import hu.otp.assignment.dto.PlatformDto;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 

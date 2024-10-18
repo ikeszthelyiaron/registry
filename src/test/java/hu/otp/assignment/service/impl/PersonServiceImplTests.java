@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class PersonServiceImplTests {
+class PersonServiceImplTests {
 
     @Mock
     private PersonRepository personRepository;
@@ -33,19 +33,19 @@ public class PersonServiceImplTests {
     private PersonServiceImpl personServiceImpl;
 
     @Test
-    void givenNoPerson_WhenGetPersonById_ThenExceptionThrown() throws Exception {
+    void givenNoPerson_WhenGetPersonById_ThenExceptionThrown()  {
         assertThrows(NoPersonWithSuchIdException.class,
                 () -> personServiceImpl.getPersonById(1L));
     }
 
     @Test
-    void givenNoPerson_WhenDeletePersonById_ThenExceptionThrown() throws Exception {
+    void givenNoPerson_WhenDeletePersonById_ThenExceptionThrown()  {
         assertThrows(NoPersonWithSuchIdException.class,
                 () -> personServiceImpl.deletePerson(1L));
     }
 
     @Test
-    void givenNoAddress_WhenCreatePerson_ThenExceptionThrown() throws Exception {
+    void givenNoAddress_WhenCreatePerson_ThenExceptionThrown()  {
         RegisterPersonDto registerPersonDto = new RegisterPersonDto("Bill", 2L, 3L);
 
         assertThrows(NoAddressWithSuchIdException.class,
@@ -53,7 +53,7 @@ public class PersonServiceImplTests {
     }
 
     @Test
-    void givenNonExistentTemporaryAddress_WhenCreatePerson_ThenExceptionThrown() throws Exception {
+    void givenNonExistentTemporaryAddress_WhenCreatePerson_ThenExceptionThrown()  {
         RegisterPersonDto registerPersonDto = new RegisterPersonDto("Bill", 2L, 3L);
         Address permanent = mock(Address.class);
         when(addressRepository.findById(2L)).thenReturn(Optional.of(permanent));
@@ -62,24 +62,27 @@ public class PersonServiceImplTests {
     }
 
     @Test
-    void givenSameTemAndPermaAddress_WhenCreatePerson_ThenExceptionThrown() throws Exception {
+    void givenSameTemAndPermaAddress_WhenCreatePerson_ThenExceptionThrown()  {
         RegisterPersonDto registerPersonDto = new RegisterPersonDto("Bill", 2L, 3L);
-        Address permanent = mock(Address.class);
-        Address temporary = mock(Address.class);
+        Address permanent = new Address();
+        Address temporary = new Address();
+        permanent.setCity("Budapest");
+        temporary.setCity("Budapest");
         when(addressRepository.findById(2L)).thenReturn(Optional.of(permanent));
-        when(addressRepository.findById(3L)).thenReturn(Optional.of(permanent));
+        when(addressRepository.findById(3L)).thenReturn(Optional.of(temporary));
+
         assertThrows(AddressClashException.class,
                 () -> personServiceImpl.createPerson(registerPersonDto));
     }
 
     @Test
-    void givenNoPerson_WhenDeleteTemporary_ThenExceptionThrown() throws Exception {
+    void givenNoPerson_WhenDeleteTemporary_ThenExceptionThrown()  {
         assertThrows(NoPersonWithSuchIdException.class,
                 () -> personServiceImpl.deleteTemporary(1));
     }
 
     @Test
-    void givenNoTemporary_WhenDeleteTemporary_ThenExceptionThrown() throws Exception {
+    void givenNoTemporary_WhenDeleteTemporary_ThenExceptionThrown()  {
         Person person = mock(Person.class);
         when(personRepository.findById(1L)).thenReturn(Optional.of(person));
         assertThrows(NoTempAddressException.class,
@@ -87,13 +90,13 @@ public class PersonServiceImplTests {
     }
 
     @Test
-    void givenNoPerson_WhenAddTemporaryAddress_ThenExceptionThrown() throws Exception {
+    void givenNoPerson_WhenAddTemporaryAddress_ThenExceptionThrown()  {
         assertThrows(NoPersonWithSuchIdException.class,
                 () -> personServiceImpl.addTemporaryAddress(1, 1));
     }
 
     @Test
-    void givenNoTemporary_WhenAddTemporaryAddress_ThenExceptionThrown() throws Exception {
+    void givenNoTemporary_WhenAddTemporaryAddress_ThenExceptionThrown()  {
         Person person = mock(Person.class);
         when(personRepository.findById(1L)).thenReturn(Optional.of(person));
         when(person.getTemporary()).thenReturn(new Address());
@@ -102,7 +105,7 @@ public class PersonServiceImplTests {
     }
 
     @Test
-    void givenNoAddress_WhenAddTemporaryAddress_ThenExceptionThrown() throws Exception {
+    void givenNoAddress_WhenAddTemporaryAddress_ThenExceptionThrown() {
         Person person = mock(Person.class);
         when(personRepository.findById(1L)).thenReturn(Optional.of(person));
         assertThrows(NoAddressWithSuchIdException.class,
@@ -110,7 +113,7 @@ public class PersonServiceImplTests {
     }
 
     @Test
-    void givenPermanentAddress_WhenAddTemporaryAddress_ThenExceptionThrown() throws Exception {
+    void givenPermanentAddress_WhenAddTemporaryAddress_ThenExceptionThrown()  {
         Person person = mock(Person.class);
         Address address = mock(Address.class);
         when(personRepository.findById(1L)).thenReturn(Optional.of(person));
@@ -121,7 +124,7 @@ public class PersonServiceImplTests {
     }
 
     @Test
-    void givenPersonAssociatedWithAddress_WhenAddTemporaryAddress_ThenExceptionThrown() throws Exception {
+    void givenPersonAssociatedWithAddress_WhenAddTemporaryAddress_ThenExceptionThrown()  {
         Person person = mock(Person.class);
         Address address = mock(Address.class);
         when(personRepository.findById(1L)).thenReturn(Optional.of(person));
@@ -133,13 +136,13 @@ public class PersonServiceImplTests {
     }
 
     @Test
-    void givenNoPerson_WhenChangePermanentAdderss_ThenExceptionThrown() throws Exception {
+    void givenNoPerson_WhenChangePermanentAdderss_ThenExceptionThrown() {
         assertThrows(NoPersonWithSuchIdException.class,
                 () -> personServiceImpl.changePermanentAddress(3, 2));
     }
 
     @Test
-    void givenNoAddress_WhenChangePermanentAdderss_ThenExceptionThrown() throws Exception {
+    void givenNoAddress_WhenChangePermanentAdderss_ThenExceptionThrown()  {
         Person person = mock(Person.class);
         when(personRepository.findById(1L)).thenReturn(Optional.of(person));
         assertThrows(NoAddressWithSuchIdException.class,
@@ -147,7 +150,7 @@ public class PersonServiceImplTests {
     }
 
     @Test
-    void givenTemporaryAddress_WhenChangePermanentAdderss_ThenExceptionThrown() throws Exception {
+    void givenTemporaryAddress_WhenChangePermanentAdderss_ThenExceptionThrown() {
         Person person = mock(Person.class);
         Address address = mock(Address.class);
         when(personRepository.findById(1L)).thenReturn(Optional.of(person));
@@ -158,7 +161,7 @@ public class PersonServiceImplTests {
     }
 
     @Test
-    void givenAddressAssociatedWithAnotherPerson_WhenChangePermanentAdderss_ThenExceptionThrown() throws Exception {
+    void givenAddressAssociatedWithAnotherPerson_WhenChangePermanentAdderss_ThenExceptionThrown() {
         Person person = mock(Person.class);
         Address address = mock(Address.class);
         when(personRepository.findById(1L)).thenReturn(Optional.of(person));
@@ -172,13 +175,13 @@ public class PersonServiceImplTests {
 
 
     @Test
-    void givenNoPerson_WhenChangeName_ThenExceptionThrown() throws Exception {
+    void givenNoPerson_WhenChangeName_ThenExceptionThrown() {
         assertThrows(NoPersonWithSuchIdException.class,
                 () -> personServiceImpl.changeName(new PersonNameDto("Bill"), 2));
     }
 
     @Test
-    void givenPersonInDB_WhenDeletePerson_ThenDeleteMethodInvoked() throws Exception {
+    void givenPersonInDB_WhenDeletePerson_ThenDeleteMethodInvoked() {
         Person person = new Person();
         Address address = new Address();
         person.setPermanent(address);
@@ -189,7 +192,7 @@ public class PersonServiceImplTests {
     }
 
     @Test
-    void givenPerson_WhenChangeName_ThenNameChanged() throws Exception {
+    void givenPerson_WhenChangeName_ThenNameChanged() {
         Person person = new Person();
         person.setName("wrong name");
         when(personRepository.findById(1L)).thenReturn(Optional.of(person));
@@ -199,7 +202,7 @@ public class PersonServiceImplTests {
     }
 
     @Test
-    void givenPerson_WhenChangePermanentAddress_ThenPermanentAddressChanged() throws Exception {
+    void givenPerson_WhenChangePermanentAddress_ThenPermanentAddressChanged() {
         Person person = new Person();
         Address firstAddress = new Address();
         firstAddress.setCity("Debrecen");
@@ -218,7 +221,7 @@ public class PersonServiceImplTests {
     }
 
     @Test
-    void givenRegisterPersonDto_WhenCreatePerson_ThenPersonCreated() throws Exception {
+    void givenRegisterPersonDto_WhenCreatePerson_ThenPersonCreated() {
         RegisterPersonDto registerPersonDto = new RegisterPersonDto("Legit name", 1L, 2L);
         Address permanent = new Address();
         permanent.setCity("Budapest");
@@ -237,7 +240,7 @@ public class PersonServiceImplTests {
     }
 
     @Test
-    void givenPersonWithoutTemporary_WhenAddTemporaryAddress_ThenAddressAdded() throws Exception {
+    void givenPersonWithoutTemporary_WhenAddTemporaryAddress_ThenAddressAdded() {
         Person person = new Person();
         Address address = new Address();
         address.setPermanent(false);
@@ -253,7 +256,7 @@ public class PersonServiceImplTests {
     }
 
     @Test
-    void givenPersonWithTemporary_WhenDeleteTemporaryAddress_ThenAddressRemoved() throws Exception {
+    void givenPersonWithTemporary_WhenDeleteTemporaryAddress_ThenAddressRemoved() {
         Person person = new Person();
         Address address = new Address();
         address.setPermanent(false);
